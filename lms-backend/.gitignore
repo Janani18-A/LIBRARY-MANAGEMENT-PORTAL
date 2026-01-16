@@ -1,4 +1,7 @@
 .env
-/node_modules
+node_modules/
 auth/hash.js
-/My Data Sources
+My Data Sources/
+# Database backups
+*.sql
+lms_backup.sql
