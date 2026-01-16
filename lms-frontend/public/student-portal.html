@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library User Portal</title>
+  <link rel="stylesheet" href="/student-portal.css">
+</head>
+<body>
+  <header>
+    <h2>📚 User Portal</h2>
+    <button onclick="openLogout()">Logout</button>
+  </header>
+
+  <div class="container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="profile">
+        <div class="avatar" id="avatar">S</div>
+        <h3 id="sideName">Name</h3>
+        <p id="sideEmail">RegNo</p>
+      </div>
+      <button class="active" onclick="showSection('dashboard',this)">Dashboard</button>
+      <button onclick="showSection('profilePage',this)">My Profile</button>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+
+      <!-- Dashboard -->
+      <div id="dashboard" class="section active">
+        <h2>Dashboard</h2>
+        <div class="cards">
+          <div class="card" id="borrowedCard" onclick="showTable('borrowed')">
+            Borrowed Books<br><b>0</b>
+          </div>
+          <div class="card" id="returnedCard" onclick="showTable('returned')">
+            Returned Books<br><b>0</b>
+          </div>
+          <div class="card" id="pendingCard" onclick="showTable('pending')">
+            Pending Fine<br><b>₹0</b>
+          </div>
+        </div>
+        <div id="dynamicTable"></div>
+      </div>
+
+      <!-- Profile -->
+      <div id="profilePage" class="section">
+        <h2>My Profile</h2>
+
+        <div class="profile-box">
+          <p><b>Name:</b> <span id="dName"></span></p>
+          <p><b>Reg No:</b> <span id="dReg"></span></p>
+          <p><b>Department:</b> <span id="dDept"></span></p>
+          <p><b>Year:</b> <span id="dYear"></span></p>
+        </div>
+
+        <div class="form-box">
+          <h3>Edit Profile</h3>
+          <div class="form-group">
+            <label>Name</label>
+            <input id="nameInput">
+          </div>
+          <div class="form-group">
+            <label>Reg No</label>
+            <input id="regInput">
+          </div>
+          <div class="form-group">
+            <label>Department</label>
+            <input id="deptInput">
+          </div>
+          <div class="form-group">
+            <label>Year</label>
+            <input id="yearInput">
+          </div>
+          <button class="save-btn" onclick="saveProfile()">Save Profile</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div id="fieldModal" class="modal">
+    <div class="modal-box">
+      <h3 id="modalTitle">Error</h3>
+      <p id="modalMsg">Message</p>
+      <div class="modal-actions">
+        <button class="ok-btn" onclick="closeFieldModal()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="profileModal" class="modal">
+    <div class="modal-box">
+      <h3>Profile Updated ✅</h3>
+      <div class="modal-actions">
+        <button class="ok-btn" onclick="closeProfileModal()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="logoutModal" class="modal">
+    <div class="modal-box">
+      <h3>Confirm Logout</h3>
+      <div class="modal-actions">
+        <button class="cancel-btn" onclick="closeLogout()">Cancel</button>
+        <button class="ok-btn" onclick="confirmLogout()">OK</button>
+      </div>
+    </div>
+  </div>
+<!-- Save Success Popup -->
+<div id="savePopup" class="save-popup">
+  <div class="save-popup-box">
+    <h3>Profile Updated ✅</h3>
+    <p>Your profile has been saved successfully.</p>
+    <button onclick="closeSavePopup()">OK</button>
+  </div>
+</div>
+
+  <script src="/student-portal.js"></script>
+</body>
+</html>

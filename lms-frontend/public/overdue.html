@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overdue Books Report</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f9;
+    }
+    header {
+      background: #4cc9f0;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .container {
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background: #4cc9f0;
+      color: #fff;
+    }
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+    tr:hover {
+      background: #e0f7fa;
+    }
+    .no-data {
+      text-align: center;
+      padding: 20px;
+      color: #555;
+    }
+
+    /* ---------- MOBILE VIEW: <= 768px ---------- */
+@media (max-width: 768px) {
+
+  body {
+    font-size: 13px;
+    overflow-x: hidden;
+  }
+
+  header h1 {
+    font-size: 16px;
+  }
+
+  #backToDashboard {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .container {
+    padding: 10px;
+  }
+
+  /* Make table horizontally scrollable */
+  table#overdueTable {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    table-layout: auto;
+    font-size: 12px;
+  }
+
+  th, td {
+    padding: 9px 8px;
+    white-space: nowrap;       /* prevent breaking words */
+    word-break: normal;
+    overflow-wrap: normal;
+    text-align: left;
+    font-size: 12px;
+  }
+
+  th {
+    font-weight: 600;
+  }
+}
+/* ---------- MOBILE VIEW: <= 360px ---------- */
+@media (max-width: 360px) {
+
+  body {
+    font-size: 11px;
+  }
+
+  header h1 {
+    font-size: 14px;
+  }
+
+  #backToDashboard {
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+
+  .container {
+    padding: 8px;
+  }
+
+  /* Table adjustments */
+  table#overdueTable {
+    font-size: 10px;
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    table-layout: auto;
+  }
+
+  th, td {
+    padding: 8px 6px;
+    white-space: nowrap;   /* keep one line per cell */
+    word-break: normal;
+    overflow-wrap: normal;
+    font-size: 10px;
+  }
+}
+
+
+
+  </style>
+</head>
+<body>
+
+  <header>
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 0px;">
+      <h1>Overdue Books Report</h1>
+    <button id="backToDashboard" style="padding:8px 12px;  background:#f04c52; color:white; border:none; border-radius:4px; cursor:pointer;">
+    ← Back to Dashboard
+</button>
+</div>
+  </header>
+
+  <div class="container">
+    <table id="overdueTable">
+      <thead>
+        <tr>
+          <th>Student Name</th>
+          <th>Reg No</th>
+          <th>Department</th>
+          <th>Book Title</th>
+          <th>Author</th>
+          <th>Book Dept</th>
+          <th>Issue Date</th>
+          <th>Due Date</th>
+          <th>Fine</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="9" class="no-data">Loading...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    async function loadOverdueBooks() {
+      const tbody = document.querySelector("#overdueTable tbody");
+      tbody.innerHTML = '<tr><td colspan="9" class="no-data">Loading...</td></tr>';
+
+      try {
+        const response = await fetch("/admin/overdue");
+        const data = await response.json();
+
+        if (data.success && data.overdueBooks.length > 0) {
+          tbody.innerHTML = ""; // Clear "Loading..."
+          data.overdueBooks.forEach(book => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${book.student_name}</td>
+              <td>${book.student_id}</td>
+              <td>${book.student_dept}</td>
+              <td>${book.book_title}</td>
+              <td>${book.book_author}</td>
+              <td>${book.book_department}</td>
+              <td>${new Date(book.issue_date).toLocaleDateString()}</td>
+              <td>${new Date(book.due_date).toLocaleDateString()}</td>
+              <td>₹${book.fine_amount || 0}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="9" class="no-data">No overdue books found.</td></tr>';
+        }
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="9" class="no-data">Error fetching data</td></tr>';
+        console.error("Error fetching overdue books:", err);
+      }
+    }
+
+    // Load when page opens
+    loadOverdueBooks();
+
+    // Optional: refresh every 1 min
+    setInterval(loadOverdueBooks, 60000);
+
+    document.getElementById("backToDashboard").addEventListener("click", () => {
+    window.location.href = "/admin/dashboard"; // dashboard URL
+});
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - GCE Library</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo i {
+            font-size: 3rem;
+            color: #4361ee;
+            margin-bottom: 15px;
+        }
+
+        .logo h1 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #4361ee;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+        }
+
+        .security-notice {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            color: #856404;
+            font-size: 0.9rem;
+        }
+
+        .error-message {
+            color: #e63946;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        .back-link {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,0,0,0.2);
+    padding: 8px 14px;
+    border-radius: 20px;
+    transition: all 0.3s;
+}
+
+.back-link:hover {
+    background: rgba(0,0,0,0.35);
+    transform: translateX(-3px);
+}
+
+
+
+@media (max-width: 768px) {
+ body {
+    align-items: flex-start; 
+    padding-top: 80px;       
+  }
+  .login-container {
+    padding: 28px;          
+    max-width: 380px;
+  }
+
+  .logo i {
+    font-size: 2.6rem;
+  }
+
+  .logo h1 {
+    font-size: 1.6rem;
+  }
+
+  .logo p {
+    font-size: 0.95rem;
+  }
+
+  .input-group input {
+    padding: 14px 14px 14px 44px;
+    font-size: 0.95rem;
+  }
+
+  .btn-login {
+    padding: 14px;
+    font-size: 1rem;
+  }
+  .back-link {
+    position: fixed;   /* IMPORTANT */
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+}
+}
+@media (max-width: 480px) {
+
+  body {
+    align-items: flex-start;   /* center remove */
+    padding-top: 70px;         /* back button ku space */
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .back-link {
+    top: 12px;
+    left: 12px;
+    font-size: 0.85rem;
+    padding: 6px 12px;
+  }
+
+  .login-container {
+    padding: 22px;
+    max-width: 100%;
+    border-radius: 16px;
+     margin-bottom: 40px;
+  }
+
+  .logo i {
+    font-size: 2.2rem;
+  }
+
+  .logo h1 {
+    font-size: 1.4rem;
+  }
+
+  .logo p {
+    font-size: 0.9rem;
+  }
+
+  .input-group input {
+    padding: 12px 12px 12px 42px;
+    font-size: 0.9rem;
+  }
+
+  .btn-login {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+
+  .security-notice {
+    font-size: 0.85rem;
+    padding: 12px;
+  }
+}
+
+
+    </style>
+</head>
+<body>
+    <a href="/index.html" class="back-link">
+  <i class="fas fa-arrow-left"></i> Back
+</a>
+
+    <div class="login-container">
+        <div class="logo">
+            <i class="fas fa-book-open"></i>
+            <h1>GCE Library Admin</h1>
+            <p>Secure Administrator Access</p>
+        </div>
+
+        <form id="adminLoginForm">
+            <div class="form-group">
+                <label for="username">Admin Username</label>
+                <div class="input-group">
+                    <i class="fas fa-user-shield"></i>
+                    <input type="text" id="username" placeholder="Enter admin username" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+            </div>
+
+            <div class="error-message" id="errorMessage">
+                Invalid credentials. Please try again.
+            </div>
+
+            <button type="submit" class="btn-login">
+                <i class="fas fa-sign-in-alt"></i> Login to Admin Portal
+            </button>
+        </form>
+
+        <div class="security-notice">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Security Notice:</strong> This portal is restricted to authorized personnel only.
+        </div>
+    </div>
+
+    <script>
+    document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const errorMessage = document.getElementById('errorMessage');
+        const submitBtn = this.querySelector('button[type="submit"]');
+
+        // Show loading state
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('/admin/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                errorMessage.style.display = 'none';
+                // Redirect to dashboard through backend
+                window.location.href = '/admin/dashboard';
+            } else {
+                errorMessage.textContent = result.error || 'Login failed';
+                errorMessage.style.display = 'block';
+                document.getElementById('password').value = '';
+            }
+        } catch (error) {
+            errorMessage.textContent = 'Network error. Please check if server is running.';
+            errorMessage.style.display = 'block';
+            console.error('Login error:', error);
+        } finally {
+            // Reset button state
+            submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login to Admin Portal';
+            submitBtn.disabled = false;
+        }
+    });
+
+    // Check if already logged in
+window.addEventListener('load', async function() {
+    try {
+        const response = await fetch('/admin/data');
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                window.location.href = '/admin/dashboard';
+            }
+        }
+    } catch (err) {
+        // user not logged in — stay on login page
+    }
+});
+
+</script>
+</body>
+</html>

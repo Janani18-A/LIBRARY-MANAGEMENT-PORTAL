@@ -1,0 +1,4 @@
+.env
+/node_modules
+auth/hash.js
+/My Data Sources

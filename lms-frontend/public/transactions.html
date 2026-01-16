@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Transactions</title>
+
+<style>
+  body { font-family: sans-serif; background: #f0f2f5; margin: 0; padding: 0; }
+  .container { max-width: 1200px; margin: 30px auto; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+  h2 { color: #3a0ca3; margin-bottom: 20px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+  th, td { padding: 12px 15px; border: 1px solid #ddd; text-align: left; }
+  th { background: #3a0ca3; color: #fff; }
+  tr:nth-child(even) { background: #f8f9fa; }
+  tr:hover { background: #e9ecef; }
+  .btn-return { background: #f72585; color: white; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+  .btn-return:hover { opacity: 0.9; }
+  .no-data { text-align: center; font-style: italic; color: #555; }
+
+@media (max-width: 768px) {
+h2{
+  font-size: 16px;
+}
+#backToDashboard{
+  font-size: 10px;
+}
+  table {
+    width: 100%;
+    table-layout: auto;        /* allow table to auto-size columns */
+    font-size: 12px;
+    display: block;            /* enable horizontal scroll */
+    overflow-x: auto;          /* horizontal scroll */
+  }
+
+  th, td {
+    padding: 9px 8px;
+    white-space: nowrap;       /* prevent letter-break */
+    word-break: normal;
+    overflow-wrap: normal;
+    text-align: center;
+  }
+
+  .btn-return {
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+
+  /* allow scroll indicator */
+  table::-webkit-scrollbar {
+    height: 6px;
+  }
+  table::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.2);
+    border-radius: 3px;
+  }
+}
+@media (max-width: 360px) {
+  h2 {
+    font-size: 14px;
+  }
+
+  #backToDashboard {
+    font-size: 9px;
+    padding: 4px 6px;
+  }
+
+  table {
+    width: 100%;
+    table-layout: auto;       /* auto column sizing */
+    font-size: 10px;
+    display: block;           /* enable horizontal scroll */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  th, td {
+    padding: 6px 4px;
+    white-space: nowrap;      /* keep content in one line */
+    word-break: normal;
+    overflow-wrap: normal;
+    text-align: center;
+    font-size: 10px;
+  }
+
+  .btn-return {
+    font-size: 9px;
+    padding: 3px 5px;
+  }
+
+  /* Scrollbar indicator */
+  table::-webkit-scrollbar {
+    height: 4px;
+  }
+  table::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.2);
+    border-radius: 2px;
+  }
+}
+
+ 
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  
+  <!-- Add this inside transactions.html, at the top or where you want the button -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin: 0px 0;">
+  <h2>Active Transactions</h2>
+    <button id="backToDashboard" style="
+        padding: 8px 14px;
+        background-color: #4cc9f0;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    ">
+        ← Back to Dashboard
+    </button>
+</div>
+
+
+  <table>
+    <thead>
+      <tr>
+        <th>Student ID</th>
+        <th>Student Name</th>
+        <th>Book Title</th>
+        <th>Department</th>
+        <th>Issue Date</th>
+        <th>Due Date</th>
+        <th>Fine (₹)</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody id="transactionsBody">
+      <tr>
+        <td colspan="8" class="no-data">Loading transactions...</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+async function loadTransactions() {
+  try {
+    const res = await fetch("/admin/transactions");
+    const data = await res.json();
+
+    const tbody = document.getElementById("transactionsBody");
+    tbody.innerHTML = "";
+
+    // Only show active transactions (not returned)
+    const activeTx = data.filter(t => t.status !== "returned");
+
+    if (!activeTx.length) {
+      tbody.innerHTML = `<tr><td colspan="8" class="no-data">No active transactions</td></tr>`;
+      return;
+    }
+
+    activeTx.forEach(t => {
+      const today = new Date();
+      const due = new Date(t.due_date);
+      let fine = 0;
+      let status = "Issued";
+
+      if (today > due) {
+        const diffDays = Math.ceil((today - due) / (1000 * 60 * 60 * 24));
+        fine = Math.ceil(diffDays / 15) * 10;
+        status = "Overdue";
+      }
+
+      const issueDate = t.issue_date ? t.issue_date.split("T")[0] : "-";
+      const dueDate = t.due_date ? t.due_date.split("T")[0] : "-";
+
+      tbody.innerHTML += `
+        <tr>
+          <td>${t.student_id}</td>
+          <td>${t.student_name}</td>
+
+          <td>${t.book_title}</td>
+          <td>${t.book_department}</td>
+          <td>${issueDate}</td>
+          <td>${dueDate}</td>
+          <td>₹${fine}</td>
+          <td>${status}</td>
+          <td>
+            <button class="btn-return" onclick="returnBook(${t.id}, this)">Return</button>
+          </td>
+        </tr>
+      `;
+    });
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById("transactionsBody").innerHTML =
+      `<tr><td colspan="8" class="no-data">Failed to load transactions</td></tr>`;
+  }
+}
+
+async function returnBook(id, btn) {
+  try {
+    const res = await fetch(`/transactions/return/${id}`, { method: "POST" });
+    const data = await res.json();
+
+    if (data.success) {
+      alert(data.message);
+      // Remove the returned row immediately
+      btn.closest("tr").remove();
+    } else {
+      alert("Error: " + data.message);
+    }
+  } catch(err) {
+    console.error(err);
+    alert("Failed to return book");
+  }
+}
+
+// Load transactions on page load
+window.onload = loadTransactions;
+
+document.getElementById("backToDashboard").addEventListener("click", () => {
+    window.location.href = "/admin/dashboard";
+});
+</script>
+
+</body>
+</html>

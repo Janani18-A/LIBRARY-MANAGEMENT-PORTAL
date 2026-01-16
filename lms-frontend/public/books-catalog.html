@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Books Catalog</title>
+
+<style>
+body {
+  font-family: sans-serif;
+  background: #f0f2f5;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  padding: 30px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+h2, h3 {
+  color: #431e98ed;
+}
+
+/* ================= Departments ================= */
+
+.department-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.department-card {
+  padding: 30px 20px;
+  background: rgba(15, 19, 230, 0.554);
+  text-align: center;
+  border-radius: 17px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: 0.25s ease;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.department-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.241);
+}
+
+/* ================= Books Section ================= */
+
+#departmentBooks {
+  display: none;
+  flex-direction: column;
+  align-items: flex-start; /* LEFT align */
+}
+
+/* Back button – left */
+/*
+#backBtn {
+  position: relative;
+  left: 0;
+  top: 0;
+  background: #f72585;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+    /*margin-top: -25px;
+}
+*/
+.btn-back {
+  background: transparent;
+  border: none;
+ border-radius: 5px;
+   background: #f72585;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 6px;
+  margin-bottom: 2px; 
+  margin-left: 2.4rem;
+}
+
+.btn-back:hover {
+box-shadow:  2px 4px 4px  #f72585;
+}
+
+
+#deptTitle {
+  text-align: center;
+  margin-top: 0; 
+}
+
+
+/* Search input – center & below title */
+#searchInput {
+  display: block;
+  margin: 10px auto 15px auto;
+  width: 360px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* ================= Table ================= */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+}
+
+th {
+  background: #3a0ca3;
+  color: white;
+}
+
+/* ================= Buttons ================= */
+
+button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-add {
+  background: #4cc9f0;
+  color: #000;
+}
+
+/* ================= Modal ================= */
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px 25px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.close {
+  float: right;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.modal h3 {
+  margin-top: 0;
+  color: #3a0ca3;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+/* ================= Form ================= */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+}
+
+#confirmIssueBtn {
+  background: #4cc9f0;
+  color: #000;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+#confirmIssueBtn:hover {
+  opacity: 0.9;
+}
+
+
+/*====back button===*/
+.catalog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.catalog-header h2 {
+  margin: 0;
+}
+
+.btn-admin-back {
+  background: #4361ee;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-admin-back:hover {
+  opacity: 0.9;
+}
+
+
+
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+
+@media (max-width: 768px) {
+
+  body {
+    font-size: 13px;
+    overflow-x: hidden;
+  }
+
+  .container {
+    padding: 16px;
+  }
+
+  /* Header */
+  .catalog-header h2 {
+    font-size: 18px;
+  }
+
+  .btn-admin-back {
+    font-size: 12px;
+    padding: 7px 12px;
+  }
+
+  /* Departments */
+  .department-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .department-card {
+    font-size: 14px;
+    padding: 18px 10px;
+  }
+
+  /* Books section */
+  #departmentBooks {
+    padding-top: 14px;
+  }
+
+  .btn-back {
+    font-size: 12px;
+    padding: 5px 8px;
+    margin-left: 0.75rem;
+  }
+
+  #deptTitle {
+    font-size: 17px;
+    text-align: center;
+  }
+
+  #searchInput {
+    font-size: 12px;
+    padding: 9px;
+    width: 90%;
+  }
+
+  /* Table (NO horizontal scroll) */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  th, td {
+    font-size: 11px;
+    padding: 8px 6px;
+    text-align: center;
+    word-wrap: break-word;
+    white-space: normal;
+  }
+
+  table button {
+    font-size: 10px;
+    padding: 4px 6px;
+  }
+
+  .btn-add {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
+
+
+.modal-content {
+
+  padding: 14px 16px;
+  border-radius: 12px;
+  width: 300px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.close {
+  
+  font-size: 18px;
+}
+
+.modal-form {
+
+  gap: 8px;
+ 
+}
+
+#studentIdInput,
+  #studentNameInput,
+  #studentDeptInput,
+  #studentYearInput{
+  max-width: 70%;
+   font-size: 12px;
+    padding: 6px 8px;
+}
+
+@media (max-width: 360px) {
+
+  body {
+    font-size: 12px;
+    overflow-x: hidden;
+  }
+
+  .container {
+    padding: 12px;
+  }
+
+  /* Header */
+  .catalog-header h2 {
+    font-size: 16px;
+  }
+
+  .btn-admin-back {
+    font-size: 10px;
+    padding: 6px 9px;
+  }
+
+  /* Departments */
+  .department-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .department-card {
+    font-size: 13px;
+    padding: 16px 8px;
+  }
+
+  /* Books section (ONLY when opened) */
+  #departmentBooks {
+    padding-top: 10px;
+  }
+
+  .btn-back {
+    font-size: 11px;
+    padding: 4px 6px;
+    margin-left: 0.5rem;
+  }
+
+  #deptTitle {
+    font-size: 15px;
+    text-align: center;
+  }
+
+  #searchInput {
+    font-size: 10px;
+    padding: 8px;
+    width: 80%;
+  }
+
+  /* Table */
+  table {
+    width: 100%;
+     border-collapse: collapse;
+    table-layout: fixed; 
+
+  }
+
+  th, td {
+      font-size: 9px;
+    padding: 10px 6px;
+    text-align: center;
+    word-wrap: break-word;
+    white-space: normal;  
+  
+  }
+  td {
+    font-size: 9px;
+  }
+   table button {
+    font-size: 9px;
+    padding: 3px 5px;
+  }
+
+  .btn-add {
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+   .modal-content {
+    width: 260px;
+    max-width: 95%;
+    padding: 12px 14px;
+  }
+
+  #studentIdInput,
+  #studentNameInput,
+  #studentDeptInput,
+  #studentYearInput {
+    max-width: 100%;
+    font-size: 11px;
+    padding: 5px 6px;
+  }
+
+  #confirmIssueBtn {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+}
+
+
+
+
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="catalog-header">
+   
+
+    <h2>Books Catalog</h2>
+
+    <button class="btn-admin-back" onclick="goToAdmin()">
+      ⬅ Back to Admin Portal
+    </button>
+  
+  </div>
+
+  <!-- Department Grid -->
+  <div id="departmentGrid" class="department-grid">
+    <div class="department-card" data-dept="CSE">CSE</div>
+    <div class="department-card" data-dept="ECE">ECE</div>
+    <div class="department-card" data-dept="EEE">EEE</div>
+    <div class="department-card" data-dept="MECH">MECH</div>
+    <div class="department-card" data-dept="CIVIL">CIVIL</div>
+    <div class="department-card" data-dept="MATHS">MATHS</div>
+    <div class="department-card" data-dept="PHYSICS">PHYSICS</div>
+    <div class="department-card" data-dept="ENGLISH">ENGLISH</div>
+    <div class="department-card" data-dept="GENERAL">GENERAL</div>
+  </div>
+  </div>
+
+  <!-- Books Table -->
+  <div id="departmentBooks">
+    <button class="btn-back" id="backBtn">⬅ Back</button>
+    <h3 id="deptTitle"></h3>
+    <input
+  type="text"
+  id="searchInput"
+  placeholder="Search by Title / Author / Publisher / Edition / Subject"
+  onkeyup="filterBooks()"
+/>
+
+
+
+    <div style="margin-top:15px; overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            
+            <th>Title</th>
+            <th>Author</th>
+            <th>Subject</th>
+            <th>Publisher</th>
+            <th>Edition</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="deptBooksBody">
+          <!-- DB data will appear here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Issue Book Modal -->
+<div id="issueModal" class="modal">
+  <div class="modal-content">
+    <span id="closeModalBtn" class="close">&times;</span>
+    <h3>Issue Book</h3>
+    <p id="bookInfo"></p>
+    
+    <div class="modal-form">
+      <div class="form-group">
+        <label for="studentIdInput">Student ID</label>
+        <input type="text" id="studentIdInput" placeholder="Enter Student ID" />
+      </div>
+
+      <div class="form-group">
+        <label for="studentNameInput">Student Name</label>
+        <input type="text" id="studentNameInput" placeholder="Enter Student Name" />
+      </div>
+
+      <div class="form-group">
+        <label for="studentDeptInput">Department</label>
+        <input type="text" id="studentDeptInput" placeholder="Enter Student Department" />
+      </div>
+
+      <div class="form-group">
+        <label for="studentYearInput">Year</label>
+        <input type="text" id="studentYearInput" placeholder="Enter Year" />
+      </div>
+
+      <button id="confirmIssueBtn">Confirm Issue</button>
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("issueModal").style.display = "none";
+});
+
+/* Department click */
+document.querySelectorAll(".department-card").forEach(card => {
+  card.addEventListener("click", () => {
+    const dept = card.dataset.dept;
+    loadBooks(dept);
+  });
+});
+
+
+
+
+//search books logic part
+let allBooks = [];
+let searchTimeout = null;
+let currentDepartment="";
+
+/* Fetch books from backend */
+function loadBooks(dept) {
+   currentDepartment = dept;
+  document.getElementById("deptTitle").textContent = dept + " Department Books";
+  document.getElementById("departmentGrid").style.display = "none";
+  document.getElementById("departmentBooks").style.display = "block";
+
+  fetch(`/books/${dept}`)
+    .then(res => res.json())
+    .then(books => {
+      // 🔥 Pre-compute searchable text (VERY FAST)
+      allBooks = books.map(book => ({
+        ...book,
+        _searchText: `
+          ${book.title || ""}
+          ${book.author || ""}
+          ${book.publisher || ""}
+          ${book.edition || ""}
+          ${book.subject || ""}
+        `.toLowerCase()
+      }));
+
+      renderBooks(allBooks);
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Failed to load books");
+    });
+}
+
+/* Render table */
+function renderBooks(books) {
+  const tbody = document.getElementById("deptBooksBody");
+  tbody.innerHTML = "";
+
+  if (books.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" style="text-align:center;">No books found</td>
+      </tr>`;
+    return;
+  }
+
+  books.forEach((book, index) => {
+    const row = `
+      <tr>
+        <td>${book.title || "-"}</td>
+        <td>${book.author || "-"}</td>
+        <td>${book.subject || "-"}</td>
+        <td>${book.publisher || "-"}</td>
+        <td>${book.edition || "-"}</td>
+        <td>
+          <button class="btn-add" onclick="issueBook(${book.id},  '${currentDepartment}', '${book.title}', '${book.author}')">
+            Add
+          </button>
+        </td>
+      </tr>
+    `;
+    tbody.insertAdjacentHTML("beforeend", row);
+  });
+}
+
+/* 🔍 FAST SEARCH (Debounced) */
+function filterBooks() {
+  clearTimeout(searchTimeout);
+
+  searchTimeout = setTimeout(() => {
+    const query = document.getElementById("searchInput").value.toLowerCase();
+
+    const filteredBooks = allBooks.filter(book =>
+      book._searchText.includes(query)
+    );
+
+    renderBooks(filteredBooks);
+  }, 300); // 300ms debounce
+}
+
+
+let selectedBook = {};
+
+// Show modal when Add button is clicked
+function issueBook(book_id, book_department, book_title, book_author) {
+  selectedBook = { book_id, book_department, book_title, book_author };
+
+  document.getElementById("bookInfo").textContent = `${book_title} by ${book_author}`;
+  document.getElementById("studentIdInput").value = "";
+  document.getElementById("studentNameInput").value = "";
+  document.getElementById("studentDeptInput").value = "";
+  document.getElementById("studentYearInput").value = "";
+  document.getElementById("issueModal").style.display = "flex";
+  console.log("Department:", book_department);
+
+}
+
+// Close modal
+document.getElementById("closeModalBtn").addEventListener("click", () => {
+  document.getElementById("issueModal").style.display = "none";
+});
+
+// Confirm issue (with student info)
+document.getElementById("confirmIssueBtn").addEventListener("click", () => {
+  const student_id = document.getElementById("studentIdInput").value.trim();
+  const student_name = document.getElementById("studentNameInput").value.trim();
+  const student_dept = document.getElementById("studentDeptInput").value.trim();
+  const student_year = document.getElementById("studentYearInput").value.trim();
+
+  if (!student_id || !student_name || !student_dept || !student_year) {
+    alert("All student fields are required!");
+    return;
+  }
+    const reqBody = {
+    student_id,
+    student_name,
+    student_dept,
+    student_year,
+    book_id: selectedBook.book_id,
+    book_department: student_dept, // override book's original dept with student's dept
+    book_title: selectedBook.book_title,
+    book_author: selectedBook.book_author
+  };
+   console.log("REQ BODY 👉", reqBody);
+
+  fetch("/transactions/add", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(reqBody)
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message);
+    if (data.success) {
+      document.getElementById("issueModal").style.display = "none";
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Failed to issue book");
+  });
+});
+function goToAdmin() { window.location.href = "/admin/dashboard"; }
+
+
+document.getElementById("backBtn").addEventListener("click", () => {
+  document.getElementById("departmentBooks").style.display = "none";
+  document.getElementById("departmentGrid").style.display = "grid";
+  document.getElementById("searchInput").value = "";
+});
+
+
+
+</script>
+</body>
+</html>

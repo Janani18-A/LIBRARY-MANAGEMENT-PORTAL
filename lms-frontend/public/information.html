@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>All Transactions</title>
+
+  <!-- PDF library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      padding: 20px;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn-excel { background: #1d6f42; color: white; }
+    .btn-pdf { background: #c0392b; color: white; }
+    .btn-back { background: #2c3e50; color: white; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    th {
+      background: #34495e;
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    tr:nth-child(even) {
+      background: #f2f2f2;
+    }
+
+    /* 🔴 Overdue highlight */
+    .overdue-row {
+      background-color: #ffe6e6 !important;
+    }
+
+    .table-container {
+      max-height: 70vh;
+      overflow-y: auto;
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+@media (max-width: 768px) {
+
+  body {
+    padding: 12px;
+    font-size: 13px;
+    overflow-x: hidden;
+  }
+
+  h2 {
+    font-size: 16px;
+  }
+
+  /* Top bar */
+  .top-bar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .top-bar > div {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  /* Table container */
+  .table-container {
+    max-height: none;
+    overflow-y: visible;
+    box-shadow: none;
+  }
+
+  table {
+    width: 100%;
+    table-layout: fixed;
+    font-size: 12px;
+  }
+
+
+  th {
+    font-size: 12px;
+     font-weight: 600;
+    padding: 8px 6px;
+  }
+td{
+   font-size: 13px;
+       padding: 8px 6px;
+    line-height: 1.4;
+    word-break: break-word;
+    white-space: normal;
+}
+
+}
+@media (max-width: 360px) {
+
+  table {
+    font-size: 11px;
+  }
+
+  th {
+    font-size: 11px;
+  }
+
+  td {
+    font-size: 11px;
+    padding: 7px 5px;
+  }
+
+  }
+
+
+
+  </style>
+</head>
+
+<body>
+
+  <div class="top-bar">
+    <h2>📚 All Transactions</h2>
+    <div>
+      <button class="btn-excel" onclick="exportToExcel()">📊 Excel</button>
+      <button class="btn-pdf" onclick="exportToPDF()">🧾 PDF</button>
+      <button class="btn-back" onclick="goBack()">⬅ Dashboard</button>
+    </div>
+  </div>
+
+  <div id="transactionsContainer">Loading...</div>
+
+  <script>
+    fetch("/admin/transactions-all")
+      .then(res => res.json())
+      .then(data => {
+        let html = `
+          <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Dept</th>
+                <th>Year</th>
+                <th>Book ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Book Dept</th>
+                <th>Issue</th>
+                <th>Due</th>
+                <th>Return</th>
+                <th>Status</th>
+                <th>Fine ₹</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        data.forEach(t => {
+          let rowClass = t.status === "overdue" ? "overdue-row" : "";
+
+          html += `
+            <tr class="${rowClass}">
+              <td>${t.student_id}</td>
+              <td>${t.student_name}</td>
+              <td>${t.student_dept}</td>
+              <td>${t.student_year}</td>
+              <td>${t.book_id}</td>
+              <td>${t.book_title}</td>
+              <td>${t.book_author}</td>
+              <td>${t.book_department}</td>
+              <td>${new Date(t.issue_date).toLocaleDateString()}</td>
+              <td>${new Date(t.due_date).toLocaleDateString()}</td>
+              <td>${t.return_date ? new Date(t.return_date).toLocaleDateString() : "-"}</td>
+              <td>${t.status}</td>
+              <td>${t.fine_amount || 0}</td>
+            </tr>
+          `;
+        });
+
+        html += `
+            </tbody>
+          </table>
+          </div>
+        `;
+
+        document.getElementById("transactionsContainer").innerHTML = html;
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById("transactionsContainer").innerHTML = "Error loading data";
+      });
+
+    /* 📊 Excel export */
+    function exportToExcel() {
+      let table = document.querySelector("table");
+      //let html = table.outerHTML.replace(/ /g, '%20');
+      let html = table.outerHTML
+  .replace(/<td>(\d{10,})<\/td>/g, '<td style="mso-number-format:\\@">$1</td>')
+  .replace(/ /g, '%20');
+
+
+      let url = 'data:application/vnd.ms-excel,' + html;
+      let a = document.createElement('a');
+      a.href = url;
+      a.download = 'transactions.xls';
+      a.click();
+    }
+
+    /* 🧾 PDF export */
+    function exportToPDF() {
+      const element = document.querySelector(".table-container");
+      html2pdf()
+        .set({
+          margin: 0.5,
+          filename: 'transactions.pdf',
+          html2canvas: { scale: 2 },
+          jsPDF: { orientation: 'landscape' }
+        })
+        .from(element)
+        .save();
+    }
+
+    /* ⬅ Back */
+    function goBack() {
+      window.location.href = "/admin/dashboard";
+    }
+  </script>
+
+</body>
+</html>

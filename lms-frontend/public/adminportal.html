@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Library Management System - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #2231bdd2;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --danger: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --sidebar-width: 260px;
+            --header-height: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(to bottom, var(--secondary), var(--primary));
+            color: white;
+            height: 100vh;
+            position: fixed;
+            transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header i {
+            font-size: 1.8rem;
+            color: #4cc9f0;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .sidebar-menu ul {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 5px solid var(--success);
+            color: white;
+        }
+
+        .sidebar-menu i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: all 0.3s;
+        }
+
+        
+        /* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 22px;
+  background: #eeeff2fb;
+  border-radius: 1px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+/* RIGHT SIDE */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* NOTIFICATION */
+.notification-icon {
+  position: relative;
+  font-size: 18px;
+  color: #444;
+  cursor: pointer;
+}
+
+.notification-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ff4d4f;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 50%;
+}
+
+/* USER INFO – COMPACT */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #9792c1e5;
+  padding: 6px 12px;
+  border-radius: 22px;
+}
+
+/* AVATAR */
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #4361ee, #4cc9f0);
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* NAME & ROLE */
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #131313;
+  line-height: 1.1;
+}
+
+.user-role {
+  font-size: 11px;
+  color: #1a1a1a;
+}
+
+
+        /* Content Area Styles */
+        .content {
+            padding: 30px;
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 5px solid var(--primary);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-icon.books {
+            background: linear-gradient(135deg, #4361ee, #4cc9f0);
+        }
+
+        .card-icon.members {
+            background: linear-gradient(135deg, #7209b7, #f72585);
+        }
+
+        .card-icon.borrowed {
+            background: linear-gradient(135deg, #f48c06, #ffba08);
+        }
+
+        .card-icon.overdue {
+            background: linear-gradient(135deg, #e63946, #f72585);
+        }
+
+        .card-title {
+            font-size: 1rem;
+            color: #6c757d;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .card-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .card-footer {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Charts and Tables */
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card, .table-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+        }
+
+        .card-title-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .card-title-section h3 {
+            color: var(--secondary);
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .view-all {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+
+        .view-all:hover {
+            color: var(--secondary);
+            gap: 10px;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background: #f8f9fa;
+            color: var(--secondary);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .book-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-title {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .book-author {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .status {
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .status.available {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status.borrowed {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .status.overdue {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .days-left {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .days-left.overdue {
+            color: var(--danger);
+        }
+
+        /* Recent Activity */
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .activity-time {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4cc9f0, #4361ee);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f48c06, #e63946);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            border-radius: 50px;
+            border: 1px solid #e0e0e0;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        .search-container ,
+        .search-box{
+            display: none;
+        }
+
+
+
+  /* 🔹 Add Book Modal */
+#addBookModal {
+    display: none; /* hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+#addBookModal .modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 22px;
+    width: 380px;          
+    max-width: 92%;
+    max-height: 80vh;      
+    overflow-y: auto;      
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+}
+
+/* 🔹 Logout Modal */
+#logoutModal {
+    display: none; /* hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+#logoutModal .modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 22px;
+    width: 340px;          
+    max-width: 90%;
+    max-height: 80vh;      
+    overflow-y: auto;      
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+}
+
+/* Header & Close button (common) */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.modal-header h3 {
+    color: var(--secondary);
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: #6c757d;
+}
+
+
+/* Form spacing reduced */
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--dark);
+}
+
+/* Inputs */
+.form-control {
+    width: 100%;
+    padding: 8px 10px;     /* 👈 height reduced */
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: all 0.25s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.12);
+}
+
+
+
+
+/*-----------------------------*/
+/*MOBILE RESPONSIVE MEDIA QUERY*/
+/*-----------------------------*/
+
+
+@media (max-width: 768px) {
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  * {
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+
+  /* ---------- GLOBAL SCALE ---------- */
+  body {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  h1 { font-size: 1.3rem; }
+  h2 { font-size: 1.05rem; }
+  h3 { font-size: 0.95rem; }
+
+  p, span, label {
+    font-size: 0.8rem;
+  }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar {
+    width: 60px;                 /* shrink only */
+  }
+
+  .sidebar-header h2,
+  .sidebar-menu span {
+    display: none;               /* icons only */
+  }
+
+  .sidebar-menu a {
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .sidebar-menu i {
+    margin-right: 0;
+    font-size: 1.2rem;
+  }
+
+  .main-content {
+    margin-left: 62px;
+  }
+
+  /* ---------- HEADER ---------- */
+  .header {
+    padding: 8px 12px;
+  }
+
+  .header-left h1 {
+    font-size: 1.05rem;
+  }
+
+  .header-right {
+    gap: 10px;
+  }
+
+ 
+
+  .user-info {
+    padding: 4px 6px;
+    gap: 4px;
+  }
+
+  .user-avatar {
+    width: 26px;
+    height: 26px;
+    font-size: 10px;
+  }
+
+  .user-name {
+    font-size: 10px;
+  }
+
+  .user-role {
+    font-size: 9px;
+  }
+
+  /* ---------- CONTENT ---------- */
+  .content {
+    padding: 12px;
+  }
+
+  /* ---------- DASHBOARD CARDS ---------- */
+  .dashboard-cards {
+    grid-template-columns: 1fr;   /* single column only */
+    gap: 12px;
+  }
+
+  .card {
+    padding: 12px;
+     border-radius: 12px;
+  }
+
+  .card-title {
+    font-size: 0.75rem;
+  }
+
+  .card-value {
+    font-size: 1.55rem;
+  }
+
+  .card-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  .card-footer {
+    font-size: 0.7rem;
+  }
+
+  /* ---------- BUTTONS ---------- */
+  .btn {
+    padding: 7px 12px;
+    font-size: 0.7rem;
+    gap: 6px;
+  }
+
+  /* ---------- TABLE ---------- */
+  table {
+    display: block;
+    overflow-x: auto;
+    font-size: 0.75rem;
+  }
+
+  th, td {
+    padding: 10px;
+  }
+
+  /* ---------- MODALS ---------- */
+  .modal-content {
+    width: 70%;
+    padding: 14px;
+    max-height: 75vh;
+  }
+
+  .modal-header h3 {
+    font-size: 1rem;
+  }
+
+  .form-group label {
+    font-size: 0.8rem;
+  }
+
+  .form-control {
+    font-size: 0.8rem;
+    padding: 7px 9px;
+  }
+
+  /* ---------- ACTION BUTTONS ---------- */
+  .action-buttons {
+    margin-top: 20px;
+  }
+}
+/* ===============================
+   EXTRA SMALL DEVICES (<360px)
+   =============================== */
+@media (max-width: 360px) {
+
+  /* ---------- GLOBAL ---------- */
+  body {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  h1 { font-size: 1.15rem; }
+  h2 { font-size: 0.95rem; }
+  h3 { font-size: 0.85rem; }
+
+  p, span, label {
+    font-size: 0.75rem;
+  }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar {
+    width: 54px;
+  }
+
+  .sidebar-menu a {
+    padding: 14px;
+  }
+
+  .sidebar-menu i {
+    font-size: 1.1rem;
+  }
+
+  .main-content {
+    margin-left: 56px;
+  }
+
+  /* ---------- HEADER ---------- */
+  .header {
+    padding: 6px 10px;
+  }
+
+  .header-left h1 {
+    font-size: 0.95rem;
+  }
+
+  .user-info {
+    padding: 3px 5px;
+  }
+
+  .user-avatar {
+    width: 22px;
+    height: 22px;
+    font-size: 9px;
+  }
+
+  .user-name {
+    font-size: 9px;
+  }
+
+  .user-role {
+    font-size: 8px;
+  }
+
+  /* ---------- CONTENT ---------- */
+  .content {
+    padding: 10px;
+  }
+
+  /* ---------- DASHBOARD CARDS ---------- */
+  .dashboard-cards {
+    gap: 10px;
+  }
+
+  .card {
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .card-title {
+    font-size: 0.7rem;
+  }
+
+  .card-value {
+    font-size: 1.35rem;
+  }
+
+  .card-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+  }
+
+  .card-footer {
+    font-size: 0.65rem;
+  }
+
+  /* ---------- BUTTONS ---------- */
+  .btn {
+    padding: 6px 10px;
+    font-size: 0.65rem;
+  }
+
+  /* ---------- TABLE ---------- */
+  table {
+    font-size: 0.7rem;
+  }
+
+  th, td {
+    padding: 8px;
+  }
+
+  /* ---------- MODAL ---------- */
+  .modal-content {
+    width: 85%;
+    padding: 12px;
+    max-height: 70vh;
+  }
+
+  .modal-header h3 {
+    font-size: 0.9rem;
+  }
+
+  .form-group label {
+    font-size: 0.75rem;
+  }
+
+  .form-control {
+    font-size: 0.75rem;
+    padding: 6px 8px;
+  }
+}
+
+
+
+
+    </style>
+
+
+
+
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-book-open"></i>
+            <h2>CollegeLib</h2>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li><a href="#" class="active"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+               <li>
+  <a href="books-catalog.html">
+    <i class="fas fa-book"></i> <span>Books Catalog</span>
+  </a>
+</li>
+
+                <li id="showTransactions"><a href="/admin/information"><i class="fas fa-users"></i> <span>Informations</span></a></li>
+            <li>
+  <a href="/admin/transactions-page">
+    <i class="fas fa-exchange-alt"></i>
+    <span>Transactions</span>
+  </a>
+</li>
+
+                <li><a href="/admin/overdue-report"><i class="fas fa-chart-bar"></i> <span>Reports</span></a></li>
+                
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <h1>Admin Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <img src="/logout.png"  alt="Logout"  id="logoutBtn" style="width:26px; cursor:pointer;">
+
+                
+                <div class="user-info">
+                    <div class="user-avatar">AD</div>
+                    <div>
+                        <div class="user-name">Admin User</div>
+                        <div class="user-role">Library Administrator</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Search Bar -->
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search for students, books, or transactions...">
+                </div>
+                <button class="btn btn-primary" id="filterBtn"><i class="fas fa-filter"></i> Filter</button>
+            </div>
+
+            <!-- Dashboard Cards -->
+            <div class="dashboard-cards">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Total Books</div>
+                            <div class="card-value" id="totalBooks">0</div>
+                        </div>
+                        <div class="card-icon books">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <i class="fas fa-arrow-up" style="color: #4cc9f0;"></i> Currently Available Books in Library
+                    </div>
+                </div>
+
+             
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Books Borrowed</div>
+                            <div class="card-value" id="borrowedBooks">0</div>
+                        </div>
+                        <div class="card-icon borrowed">
+                            <i class="fas fa-hand-holding"></i>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="card"  id="overdueCard" style="cursor:pointer;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Overdue Books</div>
+                            <div class="card-value" id="overdueBooks">0</div>
+                        </div>
+                        <div class="card-icon overdue">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            
+
+           <!----  Action Buttons -->
+            <div class="action-buttons">
+               <button class="btn btn-primary" onclick="openAddBookModal()">
+  <i class="fas fa-plus"></i> Add New Book
+</button>
+
+            </div>
+        </div>
+    </div>
+<!-- Add Book Modal -->
+<div class="modal" id="addBookModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Add New Book</h3>
+      <button class="close-modal" onclick="closeAddBookModal()">&times;</button>
+    </div>
+
+    <form id="addBookForm">
+ 
+      <!-- Department -->
+      <div class="form-group">
+        <label for="bookDept">Department</label>
+        <select id="bookDept" class="form-control" required>
+          <option value="">Select Department</option>
+          <option value="CSE">CSE</option>
+          <option value="ECE">ECE</option>
+          <option value="EEE">EEE</option>
+          <option value="CIVIL">CIVIL</option>
+          <option value="MECH">MECH</option>
+          <option value="ENGLISH">ENGLISH</option>
+          <option value="MATHS">MATHS</option>
+          <option value="PHYSICS">PHYSICS</option>
+          <option value="GENERAL">GENERAL</option>
+        </select>
+      </div>
+
+             <!-- S.No -->
+<div class="form-group">
+  <label for="bookSno">S.No</label>
+  <input type="text" id="bookSno" class="form-control">
+</div>
+      <!-- Title -->
+      <div class="form-group">
+        <label for="bookTitle">Book Title</label>
+        <input type="text" id="bookTitle" class="form-control" required>
+      </div>
+
+      <!-- Author -->
+      <div class="form-group">
+        <label for="bookAuthor">Author</label>
+        <input type="text" id="bookAuthor" class="form-control">
+      </div>
+
+      <!-- Publisher -->
+      <div class="form-group">
+        <label for="bookPublisher">Publisher</label>
+        <input type="text" id="bookPublisher" class="form-control">
+      </div>
+
+      <!-- Subject -->
+      <div class="form-group">
+        <label for="bookSubject">Subject</label>
+        <input type="text" id="bookSubject" class="form-control">
+      </div>
+      <!-- Access From -->
+<div class="form-group">
+  <label for="bookAccessFrom">Access From</label>
+  <input type="number" id="bookAccessFrom" class="form-control">
+</div>
+<!-- Access To -->
+<div class="form-group">
+  <label for="bookAccessTo">Access To</label>
+  <input type="number" id="bookAccessTo" class="form-control">
+</div>
+
+      <!-- Edition -->
+      <div class="form-group">
+        <label for="bookEdition">Edition</label>
+        <input type="text" id="bookEdition" class="form-control">
+      </div>
+
+      <!-- Year -->
+      <div class="form-group">
+        <label for="bookYear">Year</label>
+        <input type="number" id="bookYear" class="form-control">
+      </div>
+
+      <!-- Total Volumes -->
+      <div class="form-group">
+        <label for="bookVolumes">Total Volumes</label>
+        <input type="number" id="bookVolumes" class="form-control">
+      </div>
+
+      <!-- ISBN -->
+      <div class="form-group">
+        <label for="bookIsbn">ISBN</label>
+        <input type="text" id="bookIsbn" class="form-control">
+      </div>
+
+<!-- Rate -->
+<div class="form-group">
+  <label for="bookRate">Rate</label>
+  <input type="number" step="0.01" id="bookRate" class="form-control">
+</div>
+      <!-- Shelf -->
+      <div class="form-group">
+        <label for="bookShelf">Shelf</label>
+        <input type="text" id="bookShelf" class="form-control">
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%">
+        Add Book
+      </button>
+    </form>
+  </div>
+</div>
+
+
+<div class="modal" id="logoutModal">
+  <div class="modal-content" style="max-width:340px;">
+    <div class="modal-header">
+      <h3>Confirm Logout</h3>
+      <button class="close-modal" onclick="closeLogoutModal()">&times;</button>
+    </div>
+
+    <p style="margin:15px 0; font-size:14px;">
+      Are you sure you want to logout?
+    </p>
+
+    <div style="display:flex; justify-content:flex-end; gap:10px;">
+      <button class="btn btn-warning" onclick="closeLogoutModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmLogout()">Logout</button>
+    </div>
+  </div>
+</div>
+
+
+
+    <script>
+       
+
+       
+        function setupEventListeners() {
+            // Sidebar menu interaction
+            const menuItems = document.querySelectorAll('.sidebar-menu a');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const tableRows = document.querySelectorAll('#borrowedBooksBody tr');
+                
+                tableRows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Filter button
+            document.getElementById('filterBtn').addEventListener('click', function() {
+                alert('Filter functionality would open a filter panel in a real application.');
+            });
+            
+            // Time range selector for chart
+            document.getElementById('timeRange').addEventListener('change', function() {
+                if (window.borrowingChart) {
+                    window.borrowingChart.destroy();
+                }
+                initializeCharts();
+            });
+            
+            
+
+
+
+
+
+            
+            // Notification click
+            document.querySelector('.notification-icon').addEventListener('click', function() {
+                alert('You have 5 new notifications:\n- 3 books are overdue\n- 2 new student registrations\n- Monthly report is ready');
+            });
+            
+            // Simulate loading data with animation
+            setTimeout(() => {
+                const cards = document.querySelectorAll('.card');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        card.style.transition = 'opacity 0.5s, transform 0.5s';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            }, 500);
+        }
+
+  fetch("/admin/dashboard-stats")
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("borrowedBooks").innerText = data.borrowedCount;
+    document.getElementById("overdueBooks").innerText = data.overdueCount;
+  })
+  .catch(err => console.error(err));
+
+// dashboard.js
+
+async function fetchTotalBooks() {
+  try {
+    const res = await fetch("/admin/total-books");
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById("totalBooks").textContent = data.totalBooks.toLocaleString();
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+window.addEventListener("DOMContentLoaded", fetchTotalBooks);
+
+
+//overdue to report page
+document.getElementById("overdueCard").addEventListener("click", () => {
+    window.location.href = "/admin/overdue-report"; // your overdue reports page
+});
+// 🔹 Add Book Modal
+function openAddBookModal() {
+    document.getElementById("addBookModal").style.display = "flex";
+}
+
+function closeAddBookModal() {
+    document.getElementById("addBookModal").style.display = "none";
+}
+
+// 🔹 Logout Modal
+const logoutBtn = document.getElementById("logoutBtn");
+const logoutModal = document.getElementById("logoutModal");
+
+logoutBtn.addEventListener("click", () => {
+    logoutModal.style.display = "flex";
+});
+
+function closeLogoutModal() {
+    logoutModal.style.display = "none";
+}
+
+// confirm logout
+function confirmLogout() {
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href="/index.html";
+}
+
+// click outside modal to close
+window.addEventListener("click", (e) => {
+    if (e.target === logoutModal) closeLogoutModal();
+    if (e.target === document.getElementById("addBookModal")) closeAddBookModal();
+});
+
+
+
+
+
+
+const addBookForm = document.getElementById("addBookForm");
+
+addBookForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  // Collect all fields including the new ones
+  const bookData = {
+    department: document.getElementById("bookDept").value,
+    sno: document.getElementById("bookSno").value,
+    title: document.getElementById("bookTitle").value,
+    author: document.getElementById("bookAuthor").value,
+    publisher: document.getElementById("bookPublisher").value,
+    subject: document.getElementById("bookSubject").value,
+    access_from: document.getElementById("bookAccessFrom").value || null,
+    access_to: document.getElementById("bookAccessTo").value || null,
+    edition: document.getElementById("bookEdition").value,
+    year: document.getElementById("bookYear").value || null,
+    total_volumes: document.getElementById("bookVolumes").value || 1,
+    isbn: document.getElementById("bookIsbn").value,
+    rate_book: document.getElementById("bookRate").value || null,
+    shelf: document.getElementById("bookShelf").value,
+  };
+
+  try {
+    const res = await fetch("/admin/add-book", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bookData),
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+      alert(result.message);
+      addBookForm.reset();
+      closeAddBookModal();
+    } else {
+      alert(result.message || "Failed to add book");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Server error");
+  }
+});
+
+
+
+
+    </script>
+    
+
+
+
+</body>
+</html>

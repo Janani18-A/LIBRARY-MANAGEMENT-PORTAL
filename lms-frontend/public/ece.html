@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ECE LMS Portal</title>
+   <link rel="stylesheet" href="dept.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+</head>
+<body>
+<button class="back-btn" onclick="goBack()">⬅ Back</button>
+  <h2>📘 ECE LMS Portal</h2>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="🔍 Search books by title or author...">
+  </div>
+
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading books...</p>
+  </div>
+
+  <div id="booksContainer" class="books-grid" style="display:none;"></div>
+
+  <!-- Modal -->
+  <div id="detailsModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div id="modalBody">Loading details...</div>
+    </div>
+  </div>
+
+  
+<script>
+const subject = "ECE";
+
+function goBack() {
+  window.location.href = "/index.html";
+}
+
+async function loadBooks() {
+  try {
+    const res = await fetch(`/books/${subject}`);
+    const books = await res.json();
+
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("booksContainer").style.display = "grid";
+
+    displayBooks(books);
+  } catch (err) {
+    console.error("Error fetching books:", err);
+    document.getElementById("loading").innerHTML =
+      "<p style='color:red;'>⚠️ Failed to load books.</p>";
+  }
+}
+
+function displayBooks(books) {
+  const container = document.getElementById("booksContainer");
+  const searchInput = document.getElementById("searchInput");
+
+  // 🔥 ONE-TIME search cache (VERY FAST)
+  const searchCache = books.map(book => ({
+    book,
+    text: `
+      ${book.title || ""}
+      ${book.author || ""}
+      ${book.publisher || ""}
+      ${book.edition || ""}
+      ${book.isbn || ""}
+    `.toLowerCase()
+  }));
+
+  function render(list) {
+    container.innerHTML = "";
+
+    if (list.length === 0) {
+      container.innerHTML =
+        "<p style='grid-column:1/-1;text-align:center;color:#777;'>No books found.</p>";
+      return;
+    }
+
+    list.forEach(book => {
+      container.innerHTML += `
+        <div class="book-card" data-isbn="${book.isbn}">
+          <h3>${book.title || "Untitled"}</h3>
+          <p class="book-info"><i class="fa-solid fa-user"></i><b> Author:</b> ${book.author || "-"}</p>
+          <p class="book-info"><i class="fa-solid fa-building"></i><b> Publisher:</b> ${book.publisher || "-"}</p>
+          <p class="book-info"><i class="fa-solid fa-calendar"></i><b> Year:</b> ${book.year || "-"}</p>
+          <p class="book-info"><i class="fa-solid fa-layer-group"></i><b> Edition:</b> ${book.edition || "-"}</p>
+          <p class="book-info"><i class="fa-solid fa-barcode"></i><b> ISBN:</b> ${book.isbn || "-"}</p>
+          <div class="shelf">
+            <i class="fa-solid fa-location-dot"></i>
+            <span><b>Shelf Location:</b> ${book.shelf || "-"}</span>
+          </div>
+          <button class="details-btn">🔍 Details</button>
+        </div>
+      `;
+    });
+
+    document.querySelectorAll(".details-btn").forEach(btn => {
+      btn.onclick = e => {
+        const isbn = e.target.closest(".book-card").dataset.isbn;
+        openModal(isbn);
+      };
+    });
+  }
+
+  // ✅ initial render (grid same as before)
+  render(books);
+
+  // ⚡ FAST SEARCH (debounced)
+  let timer = null;
+  searchInput.oninput = () => {
+    clearTimeout(timer);
+
+    timer = setTimeout(() => {
+      const q = searchInput.value.toLowerCase().trim();
+
+      if (!q) {
+        render(books); // 🔁 original grid
+        return;
+      }
+
+      const filtered = searchCache
+        .filter(b => b.text.includes(q))
+        .map(b => b.book);
+
+      render(filtered);
+    }, 180); // ⚡ super fast
+  };
+}
+
+/* ================= MODAL ================= */
+
+const modal = document.getElementById("detailsModal");
+const modalBody = document.getElementById("modalBody");
+const closeBtn = document.querySelector(".close");
+//openmodal
+  async function openModal(isbn) {
+    modal.style.display = "block";
+    modalBody.innerHTML = "<p>Loading details...</p>";
+
+    try {
+      // ✅ Fetch from Open Library API
+      const res = await fetch(`https://openlibrary.org/isbn/${isbn}.json`);
+      if (!res.ok) throw new Error("Book not found");
+
+      const data = await res.json();
+
+      // Optional: Fetch author info if available
+      let authorName = "Unknown";
+      if (data.authors && data.authors[0] && data.authors[0].key) {
+        const authorRes = await fetch(`https://openlibrary.org${data.authors[0].key}.json`);
+        const authorData = await authorRes.json();
+        authorName = authorData.name || "Unknown";
+      }
+
+     modalBody.innerHTML = `
+  <div style="text-align:center;">
+    <img src="https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg"
+         alt="Book Cover"
+         style="width:180px; height:auto; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.2); margin-bottom:15px;">
+  </div>
+  <h3 style="text-align:center; color:#1E3A8A;">${data.title || "No Title Found"}</h3>
+  <p><b>Author:</b> ${authorName}</p>
+  <p><b>Publish Date:</b> ${data.publish_date || "N/A"}</p>
+  <p><b>Publisher:</b> ${(data.publishers && data.publishers[0]) || "N/A"}</p>
+  <p><b>ISBN:</b> ${isbn}</p>
+  <p><b>Pages:</b> ${data.number_of_pages || "N/A"}</p>
+  <p><b>More Info:</b> <a href="https://openlibrary.org/isbn/${isbn}" target="_blank">View on OpenLibrary</a></p>
+`;
+
+    } catch (err) {
+      modalBody.innerHTML = `<p style="color:red;">❌ Failed to load details for ISBN ${isbn}</p>`;
+      console.error(err);
+    }
+  }
+
+  closeBtn.onclick = () => modal.style.display = "none";
+  window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
+
+
+loadBooks();
+document.getElementById("booksContainer").addEventListener("click", (e) => {
+  if (e.target.classList.contains("details-btn")) {
+    const card = e.target.closest(".book-card");
+    const isbn = card.dataset.isbn;
+    openModal(isbn);
+  }
+});
+
+</script>
+
+</body>
+</html>

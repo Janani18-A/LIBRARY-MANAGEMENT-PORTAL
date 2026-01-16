@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Sign Up</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #83dafc;
+      font-family: Segoe UI, sans-serif;
+    }
+
+    .box {
+      background: white;
+      width: 420px;
+      padding: 35px;
+      border-radius: 14px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 14px;
+      margin-top: 12px;
+      display: block;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background: #2e45f5;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #60aff8;
+      color: black;
+      font-weight: 600;
+    }
+
+    .msg {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+
+    /*MOBILE RESPONSIVE - MEDIA QUERY*/
+    @media (max-width: 768px) {
+
+  body {
+    padding: 20px;
+    align-items: flex-start;
+  }
+
+  .box {
+    width: 100%;
+    max-width: 420px;   /* desktop feel maintain */
+    padding: 22px;
+    border-radius: 12px;
+  }
+
+  h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  label {
+    font-size: 13.5px;
+    margin-top: 10px;
+  }
+
+  input, select {
+    padding: 10px;
+    font-size: 13.5px;
+    border-radius: 7px;
+    width: 100%;
+     box-sizing: border-box;  
+  }
+
+  button {
+     width: 100%;
+    padding: 11px;
+    font-size: 14px;
+    border-radius: 9px;
+  }
+
+  .msg {
+    font-size: 13px;
+  }
+
+  .back-btn {
+    font-size: 12.5px;
+    padding: 4px 10px;
+    margin-bottom: 10px;
+width: auto;
+ 
+  }
+}
+@media (max-width: 360px) {
+
+  body {
+    padding: 12px;
+    align-items: flex-start;
+    min-height: 100dvh;
+  }
+
+  .box {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px;
+    border-radius: 10px;
+  }
+
+  h2 {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  label {
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  input,
+  select {
+    width: 100%;               /* full width – no odd gaps */
+    padding: 9px;
+    font-size: 12px;
+    border-radius: 6px;
+    box-sizing: border-box;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+
+  .msg {
+    font-size: 12px;
+  }
+
+  .back-btn {
+    font-size: 11px;
+    padding: 5px 8px;
+    margin-bottom: 8px;
+    width: auto;
+  }
+}
+
+
+
+
+  </style>
+ 
+
+  
+</head>
+<body>
+
+<div class="box">
+  <button type="button" class="back-btn" onclick="goBack()">← Back</button>
+
+  <h2>Student Sign Up</h2>
+
+  <label>Register Number</label>
+  <input id="reg_no" placeholder="Register No">
+
+  <label>Name</label>
+  <input id="name" placeholder="Student Name">
+
+  <label>Department</label>
+  <select id="department">
+    <option value="">Select</option>
+    <option>CSE</option>
+    <option>ECE</option>
+    <option>EEE</option>
+    <option>MECH</option>
+    <option>CIVIL</option>
+     <option>ROBOTICS</option>
+  </select>
+
+  <label>Year</label>
+  <select id="year">
+    <option value="">Select</option>
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+  </select>
+
+  <button onclick="signup()">Create Account</button>
+  <p style="text-align:center; margin-top:15px;">
+  Already have an account?
+  <a href="/user/login" style="color:#007bff; font-weight:bold;">
+    Login
+  </a>
+</p>
+  <div class="msg" id="msg"></div>
+</div>
+
+<script>
+  async function signup() {
+  const reg_no = document.getElementById("reg_no");
+  const name = document.getElementById("name");
+  const department = document.getElementById("department");
+  const year = document.getElementById("year");
+  const msg = document.getElementById("msg");
+
+  const data = {
+    reg_no: reg_no.value.trim(),
+    name: name.value.trim(),
+    department: department.value,
+    year: year.value
+  };
+
+  if (!data.reg_no || !data.name || !data.department || !data.year) {
+    msg.innerText = "⚠️ All fields required";
+    return;
+  }
+
+  const res = await fetch("/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  const result = await res.json();
+  msg.innerText = result.message;
+
+  // redirect to portal if signup success
+  if(result.success){
+    window.location.href = "/user/portal"; // or student-login.html if you want them to login first
+  }
+}
+  function goBack() {
+    window.location.href="/index.html";
+  }
+
+
+</script>
+
+</body>
+</html>

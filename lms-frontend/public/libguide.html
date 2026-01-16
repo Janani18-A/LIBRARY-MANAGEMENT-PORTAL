@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Guide - GCE Library</title>
+  <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --secondary: #1e40af;
+      --accent: #f59e0b;
+      --light: #f8fafc;
+      --dark: #1e293b;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --gray: #64748b;
+      --premium-gold: #d4af37;
+      --premium-silver: #c0c0c0;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+      color: var(--dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    /* Premium Navbar */
+    .premium-nav {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2rem;
+    }
+    
+    .nav-left {
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+    
+    .nav-left i {
+      margin-right: 0.5rem;
+    }
+    
+    .back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    /* Premium Hero */
+    .premium-hero {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(30, 64, 175, 0.9)), 
+                  url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      padding: 5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .premium-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
+    
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .premium-hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: fadeInUp 1s ease;
+    }
+    
+    .premium-hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+      animation: fadeInUp 1s ease 0.2s both;
+    }
+    
+    .premium-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--premium-gold), var(--premium-silver));
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      animation: pulse 2s infinite;
+    }
+    
+    /* Guide Sections */
+    .guide-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+    
+    .guide-section {
+      background: white;
+      border-radius: 15px;
+      padding: 3rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .guide-section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    }
+    
+    .guide-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--primary), var(--accent));
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    
+    .section-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1.5rem;
+      color: white;
+      font-size: 1.8rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .section-title {
+      font-size: 2rem;
+      color: var(--dark);
+    }
+    
+    .step-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    
+    .step {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      background: var(--light);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+    
+    .step:hover {
+      background: #e2e8f0;
+      transform: translateX(5px);
+    }
+    
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    
+    .step-content h4 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+    
+    .step-content p {
+      color: var(--gray);
+    }
+    
+    .policy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .policy-card {
+      background: var(--light);
+      padding: 1.5rem;
+      border-radius: 10px;
+      border-left: 4px solid var(--primary);
+    }
+    
+    .policy-card h4 {
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+    
+    .policy-card p {
+      color: var(--gray);
+    }
+    
+    .feature-list {
+      list-style: none;
+    }
+    
+    .feature-list li {
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+    }
+    
+    .feature-list li:last-child {
+      border-bottom: none;
+    }
+    
+    .feature-list i {
+      color: var(--success);
+      margin-right: 1rem;
+      font-size: 1.2rem;
+    }
+    
+    .hours-contact {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .hours-card, .contact-card {
+      background: var(--light);
+      padding: 2rem;
+      border-radius: 10px;
+    }
+    
+    .hours-card h3, .contact-card h3 {
+      margin-bottom: 1.5rem;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .hours-table {
+      width: 100%;
+    }
+    
+    .hours-table tr {
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .hours-table td {
+      padding: 0.8rem 0;
+    }
+    
+    .hours-table td:last-child {
+      text-align: right;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .contact-item i {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+    
+    .fade-in {
+      animation: fadeInUp 0.8s ease both;
+    }
+    
+    .delay-1 {
+      animation-delay: 0.2s;
+    }
+    
+    .delay-2 {
+      animation-delay: 0.4s;
+    }
+    
+    .delay-3 {
+      animation-delay: 0.6s;
+    }
+
+/* ===============================
+   MOBILE ONLY – SIZE SHORTEN
+   =============================== */
+
+
+@media (max-width: 768px) {
+ body {
+    overflow-x: hidden;
+  }
+  /* Navbar */
+  .premium-nav {
+       width: 100%;
+   
+    padding: 0.6rem 0;
+  
+  }
+  .nav-container {
+     width: 100%;
+    max-width: 100%;
+    padding: 0 0.7rem; 
+     box-sizing: border-box;  
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* 🔥 left & right */
+     gap: 1.2rem;   
+
+  }
+  .nav-left {
+    font-size: 0.8rem;
+     white-space: nowrap; 
+     flex-shrink: 0;
+  }
+
+  .back-btn {
+    padding: 0.30rem 0.7rem;
+    font-size: 0.8rem;
+        white-space: nowrap;
+    flex-shrink: 0;    
+    max-width: 100%;
+
+  }
+
+  /* Hero */
+  .premium-hero {
+    padding: 3rem 1.2rem;
+  }
+
+  .premium-hero h1 {
+    font-size: 2rem;
+  }
+
+  .premium-hero p {
+    font-size: 1rem;
+  }
+
+  .premium-badge {
+    font-size: 0.8rem;
+    padding: 0.4rem 1.2rem;
+  }
+
+  /* Guide */
+  .guide-container {
+    padding: 2.5rem 1.2rem;
+  }
+
+  .guide-section {
+    padding: 1.4rem;
+  }
+
+  .section-title {
+    font-size: 1.2rem;
+  }
+
+  .section-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.3rem;
+  }
+
+  /* Steps */
+  .step {
+    padding: 1rem;
+  }
+
+  .step-number {
+    width: 34px;
+    height: 34px;
+    font-size: 0.9rem;
+  }
+
+  .step-content h4 {
+    font-size: 1.03rem;
+  }
+
+  .step-content p {
+    font-size: 0.8rem;
+  }
+
+  /* Policy Cards */
+  .policy-grid {
+    gap: 1.1rem;
+     grid-template-columns: repeat(
+      auto-fit,
+      minmax(240px, 1fr) );
+  }
+
+  .policy-card {
+    padding: 1.1rem 0.85rem;
+    border-left-width: 3px;
+    overflow: visible;
+     height: auto;    
+  }
+
+  .policy-card h4 {
+    font-size: 1.04rem;
+  }
+
+  .policy-card p {
+    font-size: 0.8rem;
+  }
+
+  .policy-card h4,
+  .policy-card p {
+    white-space: normal;
+    overflow-wrap: anywhere;   /* BEST */
+    line-height: 1.45;
+  }
+
+  /* Feature List */
+  .feature-list li {
+    font-size: 0.9rem;
+    padding: 0.9rem 0;
+  }
+
+  .feature-list i {
+    font-size: 0.9rem;
+   
+  }
+
+  /* Hours & Contact */
+  .hours-contact {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+  .hours-card,
+  .contact-card {
+       padding: 1.4rem 0.9rem;   /* horizontal kammi */
+    height: auto;             /* allow expand */
+    overflow: visible;
+   
+  }
+
+  .hours-card h3,
+  .contact-card h3 {
+    font-size: 1.15rem;
+  }
+
+  .hours-table td {
+    font-size: 0.8rem;   /* FIXED */
+    padding: 0.5rem 0;
+     white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .contact-item {
+    font-size: 0.85rem;
+       white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .contact-item i {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+     flex-shrink: 0; 
+  }
+}
+
+  @media (max-width: 480px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Navbar */
+  .premium-nav {
+    padding: 0.5rem 0;
+  }
+
+  .nav-container {
+    padding: 0 0.6rem;
+    gap: 0.8rem;
+  }
+
+  .nav-left {
+    font-size: 0.7rem;
+  }
+
+  .back-btn {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.7rem;
+  }
+
+  /* Hero */
+  .premium-hero {
+    padding: 2.2rem 1rem;
+  }
+
+  .premium-hero h1 {
+    font-size: 1.6rem;
+  }
+
+  .premium-hero p {
+    font-size: 0.9rem;
+  }
+
+  .premium-badge {
+    font-size: 0.7rem;
+    padding: 0.35rem 1rem;
+  }
+
+  /* Guide */
+  .guide-container {
+    padding: 2rem 1rem;
+  }
+
+  .guide-section {
+    padding: 1.2rem;
+  }
+
+  .section-title {
+    font-size: 1.05rem;
+  }
+
+  .section-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+
+  /* Steps */
+  .step {
+    padding: 0.85rem;
+  }
+
+  .step-number {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+  }
+
+  .step-content h4 {
+    font-size: 0.95rem;
+  }
+
+  .step-content p {
+    font-size: 0.75rem;
+  }
+
+  /* Policy Cards */
+  .policy-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .policy-card {
+    padding: 1rem 0.8rem;
+    border-left-width: 3px;
+  }
+
+  .policy-card h4 {
+    font-size: 0.95rem;
+  }
+
+  .policy-card p {
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+
+  /* Feature List */
+  .feature-list li {
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+  }
+
+  .feature-list i {
+    font-size: 0.85rem;
+  }
+
+  /* Hours & Contact */
+  .hours-contact {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .hours-card,
+  .contact-card {
+    padding: 1.2rem 0.8rem;
+  }
+
+  .hours-card h3,
+  .contact-card h3 {
+    font-size: 1rem;
+  }
+
+  .hours-table td {
+    font-size: 0.75rem;
+    padding: 0.4rem 0;
+  }
+
+  .contact-item {
+    font-size: 0.8rem;
+  }
+
+  .contact-item i {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+}
+
+
+
+  </style>
+</head>
+<body>
+  <!-- Premium Navbar -->
+  <nav class="premium-nav">
+    <div class="nav-container">
+      <div class="nav-left">
+        <i data-feather="book"></i> GCE LIBRARY GUIDE
+      </div>
+      <button class="back-btn" onclick="goBack()">
+        <i data-feather="arrow-left"></i> Back to Library
+      </button>
+    </div>
+  </nav>
+
+  <!-- Premium Hero -->
+  <section class="premium-hero">
+    <div class="hero-content">
+      <div class="premium-badge">
+        <i data-feather="award"></i> GUIDE
+      </div>
+      <h1>GCE Library User Guide</h1>
+      <p>Your comprehensive guide to accessing and utilizing all library resources and services effectively</p>
+    </div>
+  </section>
+
+  <!-- Guide Content -->
+  <div class="guide-container">
+    <!-- User Orientation Section -->
+    <section class="guide-section fade-in">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, var(--primary), #3b82f6);">
+          <i data-feather="user"></i>
+        </div>
+        <h2 class="section-title">User Orientation & Account Management</h2>
+      </div>
+      
+      <div class="step-container">
+        <div class="step fade-in delay-1">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h4>View Books & Information</h4>
+            <p>Browse our extensive collection of 5000+ books across all engineering departments. View book details, availability status, and location information without needing to login.</p>
+          </div>
+        </div>
+        
+        <div class="step fade-in delay-2">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h4>Create Your Account</h4>
+            <p>Sign up using your GCE student name and student/faculty ID. Your account gives you access to borrowing privileges, digital resources, and personalized services.</p>
+          </div>
+        </div>
+        
+        <div class="step fade-in delay-3">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h4>Book Borrowing Process</h4>
+            <p>Visit the library with your registration number. Our admin will issue books through the admin portal. You can track all your borrowed books in your personal dashboard.</p>
+          </div>
+        </div>
+        
+        <div class="step fade-in delay-1">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h4>Dashboard & Notifications</h4>
+            <p>Access your personal dashboard to view issued books, due dates, and fine amounts.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Borrowing Policies Section -->
+    <section class="guide-section fade-in delay-1">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, var(--success), #10b981);">
+          <i data-feather="file-text"></i>
+        </div>
+        <h2 class="section-title">Borrowing Policies & Rules</h2>
+      </div>
+      
+      <div class="policy-grid">
+        <div class="policy-card fade-in">
+          <h4>Loan Periods</h4>
+          <p>Students: 2 weeks (2 books max)<br>Faculty: 1 month (5 books max)<br>Staff: 3 weeks (3 books max)</p>
+        </div>
+        
+        <div class="policy-card fade-in delay-1">
+          <h4>Renewal Policy</h4>
+          <p>Books can be renewed once if no reservations exist. Renew online through your dashboard or visit the library counter.</p>
+        </div>
+        
+        <div class="policy-card fade-in delay-2">
+          <h4>Late Return Charges</h4>
+          <p>₹0.50 per day per book for students. Maximum fine capped at book replacement cost. Faculty exempt from fines.</p>
+        </div>
+        
+        <div class="policy-card fade-in delay-3">
+          <h4>Book Reservation</h4>
+          <p>Reserve unavailable books online. You'll be notified when available. Reservation held for 2 days only.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Search Help Section -->
+    <section class="guide-section fade-in delay-2">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, var(--accent), #f59e0b);">
+          <i data-feather="search"></i>
+        </div>
+        <h2 class="section-title">Search & Discovery</h2>
+      </div>
+      
+      <div class="step-container">
+        <div class="step fade-in">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h4>Search by Title</h4>
+            <p>Enter the complete or partial title of the book. Use quotation marks for exact phrase matching.</p>
+          </div>
+        </div>
+        
+        <div class="step fade-in delay-1">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h4>Search by Author</h4>
+            <p>Find all books by specific authors. Use last name first for better results (e.g., "Tanenbaum Andrew").</p>
+          </div>
+        </div>
+        
+        <div class="step fade-in delay-2">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h4>Department Filter</h4>
+            <p>Browse books by specific engineering departments - Computer Science, Electronics, Mechanical, etc.</p>
+          </div>
+        </div>
+        
+        <div class="step fade-in delay-3">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h4>Advanced Search</h4>
+            <p>Combine multiple criteria - publication year, ISBN, keywords, and availability status for precise results.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Library Infrastructure Section -->
+    <section class="guide-section fade-in delay-3">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, #8b5cf6, #9333ea);">
+          <i data-feather="home"></i>
+        </div>
+        <h2 class="section-title">Library Infrastructure & Environment</h2>
+      </div>
+      
+      <ul class="feature-list fade-in">
+        <li><i data-feather="check-circle"></i> <strong>Spacious Reading Hall</strong> - Comfortable seating for  students with natural lighting</li>
+        <li><i data-feather="check-circle"></i> <strong>Digital Zone</strong> - 50+ computers with high-speed internet access</li>
+       
+        <li><i data-feather="check-circle"></i> <strong>Silent Study Area</strong> - Designated quiet zone for focused individual study</li>
+        <li><i data-feather="check-circle"></i> <strong>Reference Section</strong> - Encyclopedias, dictionaries, and rare collections</li>
+        <li><i data-feather="check-circle"></i> <strong>Periodical Section</strong> - Latest journals, magazines, and newspapers</li>
+        <li><i data-feather="check-circle"></i> <strong>Wi-Fi Connectivity</strong> - Campus-wide high-speed wireless network</li>
+      
+      </ul>
+    </section>
+
+    <!-- Academic Support Section -->
+    <section class="guide-section fade-in">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, var(--danger), #ef4444);">
+          <i data-feather="book-open"></i>
+        </div>
+        <h2 class="section-title">Academic Support & Examination Resources</h2>
+      </div>
+      
+      <div class="policy-grid">
+        <div class="policy-card fade-in">
+          <h4>Exam Preparation</h4>
+          <p>Access previous years' question papers, model answers, and subject-specific study materials for semester exams.</p>
+        </div>
+        
+        <div class="policy-card fade-in delay-1">
+          <h4>Project References</h4>
+          <p>Comprehensive collection of project reports, thesis documents, and research papers for final year projects.</p>
+        </div>
+        
+        <div class="policy-card fade-in delay-2">
+          <h4>Reference Books</h4>
+          <p>High-demand textbooks available for in-library use only. Cannot be issued to ensure availability for all students.</p>
+        </div>
+        
+        <div class="policy-card fade-in delay-3">
+          <h4>Research Assistance</h4>
+          <p>Get help from librarians for literature surveys, citation management, and research paper writing.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hours & Contact Section -->
+    <section class="guide-section fade-in delay-1">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, #06b6d4, #0ea5e9);">
+          <i data-feather="clock"></i>
+        </div>
+        <h2 class="section-title">Library Hours & Contact Information</h2>
+      </div>
+      
+      <div class="hours-contact">
+        <div class="hours-card fade-in">
+          <h3><i data-feather="calendar"></i> Operating Hours</h3>
+          <table class="hours-table">
+            <tr>
+              <td>Monday - Friday</td>
+              <td>9:10 AM - 4:50 PM</td>
+            </tr>
+            
+            <tr>
+              <td>Holiday</td>
+              <td>Closed</td>
+            </tr>
+           
+          </table>
+        </div>
+        
+        <div class="contact-card fade-in delay-1">
+          <h3><i data-feather="mail"></i> Contact Details</h3>
+          <div class="contact-info">
+            <div class="contact-item">
+              <i data-feather="mail"></i>
+              <div>
+                <strong>Email</strong><br>
+                gcesengipatti@gmail.com
+              </div>
+            </div>
+            <div class="contact-item">
+              <i data-feather="phone"></i>
+              <div>
+                <strong>Phone</strong><br>
+                04362 221112
+              </div>
+            </div>
+            <div class="contact-item">
+              <i data-feather="map-pin"></i>
+              <div>
+                <strong>Location</strong><br>
+                Main Building, Ground Floor, GCE Thanjavur
+              </div>
+            </div>
+            <div class="contact-item">
+              <i data-feather="user"></i>
+              <div>
+                <strong>Librarian</strong><br>
+                Dr. R. Kumaraswamy
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script>
+    feather.replace();
+    
+    function goBack() {
+      window.location.href="index.html";
+    }
+    
+    // Animation on scroll
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in');
+        }
+      });
+    }, observerOptions);
+    
+    document.querySelectorAll('.guide-section').forEach(section => {
+      observer.observe(section);
+    });
+  </script>
+</body>
+</html>
