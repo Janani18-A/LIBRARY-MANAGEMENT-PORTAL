@@ -33,6 +33,7 @@ const dbConfig = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+   port: process.env.DB_PORT
 };
 
 const db = mysql.createConnection(dbConfig);
@@ -566,6 +567,6 @@ app.get("/", (req, res) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
