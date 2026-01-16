@@ -4,4 +4,3 @@ auth/hash.js
 My Data Sources/
 # Database backups
 *.sql
-lms_backup.sql
