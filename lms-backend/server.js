@@ -48,7 +48,9 @@ cron.schedule('0 0 * * *', () => {
     UPDATE transactions
     SET fine_amount = CEIL(DATEDIFF(CURDATE(), due_date)/15) * 10,
         status = 'overdue'
-    WHERE return_date IS NULL AND due_date < CURDATE()
+    WHERE status = 'issued'
+      AND return_date IS NULL
+      AND due_date < CURDATE()
   `;
   db.query(sql, (err, result) => {
     if (err) console.error("❌ Error updating overdue transactions:", err);
@@ -187,7 +189,7 @@ app.get("/admin/dashboard-stats", requireAdminAuth, (req, res) => {
     SELECT
       (SELECT COUNT(*) FROM transactions WHERE status = 'issued') AS borrowedCount,
       (SELECT COUNT(*) FROM transactions 
-        WHERE status = 'issued' AND due_date < CURDATE()) AS overdueCount
+        WHERE status='overdue') AS overdueCount
   `;
 
   db.query(sql, (err, results) => {
@@ -261,7 +263,7 @@ app.post("/transactions/return/:id", (req, res) => {
     const updateSql = `
       UPDATE transactions
       SET return_date = ?, fine_amount = ?, status = 'returned'
-      WHERE id = ?
+      WHERE id = ? AND status!='returned'
     `;
     db.query(updateSql, [returnDate, fine, transactionId], (err, result) => {
       if (err) return res.status(500).json({ success: false, message: "DB error" });
@@ -346,6 +348,7 @@ app.get("/admin/transactions-all", requireAdminAuth, (req, res) => {
 
 
 // Get all overdue transactions
+/*
 app.get("/admin/overdue", requireAdminAuth, (req, res) => {
   const sql = `
     SELECT 
@@ -368,6 +371,34 @@ app.get("/admin/overdue", requireAdminAuth, (req, res) => {
   `;
   db.query(sql, (err, results) => {
     if (err) return res.status(500).json({ success: false, error: "DB error" });
+    res.json({ success: true, overdueBooks: results });
+  });
+});
+*/
+app.get("/admin/overdue", requireAdminAuth, (req, res) => {
+  const sql = `
+    SELECT 
+      t.id AS transaction_id,
+      t.book_id,
+      t.book_title,
+      t.book_author,
+      t.book_department,
+      t.issue_date,
+      t.due_date,
+      t.fine_amount,
+      s.reg_no AS student_id,
+      s.name AS student_name,
+      s.department AS student_dept,
+      s.year AS student_year
+    FROM transactions t
+    JOIN students s ON t.student_id = s.reg_no
+    WHERE t.return_date IS NULL
+      AND t.due_date < CURDATE()
+    ORDER BY t.due_date ASC
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ success: false });
     res.json({ success: true, overdueBooks: results });
   });
 });

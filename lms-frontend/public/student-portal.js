@@ -57,6 +57,11 @@ async function loadStudentInfo() {
     console.error("Error loading student info:", err);
   }
 }
+function formatDate(dateStr) {
+  if (!dateStr) return "-";
+  return new Date(dateStr).toISOString().split("T")[0];
+}
+
 
 // --------------------
 // Load Transactions
@@ -102,7 +107,8 @@ function showTable(type) {
         <td>${b.book_title}</td>
         <td>${b.book_author}</td>
         <td>${b.book_department}</td>
-        <td>${b.due_date}</td>
+        <td>${formatDate(b.due_date)}</td>
+
         <td class="fine">₹${b.fine_amount}</td>
       </tr>`;
     });
@@ -113,7 +119,8 @@ function showTable(type) {
         <td>${b.book_title}</td>
         <td>${b.book_author}</td>
         <td>${b.book_department}</td>
-        <td>${b.issue_date}</td>
+      <td>${formatDate(b.issue_date)}</td>
+
       </tr>`;
     });
   }
@@ -216,3 +223,5 @@ function showSavePopup() {
 function closeSavePopup() {
   document.getElementById("savePopup").classList.remove("active");
 }
+
+
